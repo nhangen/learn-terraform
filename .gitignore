@@ -1,0 +1,6 @@
+# Original canvas export — design/ holds the unpacked sources that matter.
+*.zip
+_src/
+
+# Local scratch
+.DS_Store

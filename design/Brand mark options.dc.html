@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: #f4f2f8; color: #0e0e10; font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+</style>
+</helmet>
+
+<section style="padding:56px clamp(24px,5vw,64px);max-width:1320px;margin:0 auto">
+  <p style="font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#6d28d9;margin:0 0 8px">Turn 2 · T-based marks</p>
+  <h1 style="font-family:'Space Grotesk';font-weight:600;font-size:34px;letter-spacing:-.02em;margin:0 0 6px">learnterraform.day — mark options</h1>
+  <p style="margin:0 0 40px;color:#5a5a63;max-width:64ch">Carried <b>1c</b>, dropped the rest. New marks all use a <b>T</b>, built from simple geometry — none reproduce HashiCorp's trademark. Wordmark now sets <b>l · t · f</b> in purple. Reference by id.</p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:24px">
+
+    <div id="1c" style="flex:1 1 270px;background:#fff;border-radius:16px;border:1px solid #e6e4ea;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0eef4">
+        <span style="font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:#6d28d9;border:1px solid #6d28d9;border-radius:100px;padding:2px 10px">1c</span>
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#9a97a4">Bracket glyph · kept</span>
+      </div>
+      <div style="flex:1;display:grid;place-items:center;padding:40px 20px;background:#fbfaff">
+        <span style="font-family:'IBM Plex Mono';font-weight:500;font-size:46px;letter-spacing:-2px;color:#0e0e10">[<span style="color:#6d28d9">·</span>]</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 20px;background:#0e0e10">
+        <span style="font-family:'IBM Plex Mono';font-weight:500;font-size:20px;color:#fff">[<span style="color:#b39bff">·</span>]</span>
+        <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff"><span style="color:#b39bff">l</span>earn<span style="color:#b39bff">t</span>erra<span style="color:#b39bff">f</span>orm<span style="color:#7c6bbf">.day</span></span>
+      </div>
+      <p style="margin:0;padding:14px 20px;font-size:13px;color:#5a5a63">Code-native, mono. Nods to HCL blocks.</p>
+    </div>
+
+    <div id="2a" style="flex:1 1 270px;background:#fff;border-radius:16px;border:1px solid #e6e4ea;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0eef4">
+        <span style="font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:#6d28d9;border:1px solid #6d28d9;border-radius:100px;padding:2px 10px">2a</span>
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#9a97a4">Bracketed T</span>
+      </div>
+      <div style="flex:1;display:grid;place-items:center;padding:40px 20px;background:#fbfaff">
+        <span style="font-family:'IBM Plex Mono';font-weight:600;font-size:44px;letter-spacing:-1px;color:#0e0e10">[<span style="color:#6d28d9">T</span>]</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 20px;background:#0e0e10">
+        <span style="font-family:'IBM Plex Mono';font-weight:600;font-size:20px;color:#fff">[<span style="color:#b39bff">T</span>]</span>
+        <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff"><span style="color:#b39bff">l</span>earn<span style="color:#b39bff">t</span>erra<span style="color:#b39bff">f</span>orm<span style="color:#7c6bbf">.day</span></span>
+      </div>
+      <p style="margin:0;padding:14px 20px;font-size:13px;color:#5a5a63">1c's frame, now holding a T. Direct sibling of the kept mark.</p>
+    </div>
+
+    <div id="2b" style="flex:1 1 270px;background:#fff;border-radius:16px;border:1px solid #e6e4ea;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0eef4">
+        <span style="font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:#6d28d9;border:1px solid #6d28d9;border-radius:100px;padding:2px 10px">2b</span>
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#9a97a4">Constructed T (bars)</span>
+      </div>
+      <div style="flex:1;display:grid;place-items:center;padding:36px 20px;background:#fbfaff">
+        <span style="display:flex;flex-direction:column;align-items:center;gap:5px">
+          <span style="width:52px;height:12px;border-radius:3px;background:#6d28d9"></span>
+          <span style="width:12px;height:40px;border-radius:3px;background:#0e0e10"></span>
+        </span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:#0e0e10">
+        <span style="display:flex;flex-direction:column;align-items:center;gap:2px">
+          <span style="width:22px;height:5px;border-radius:1px;background:#b39bff"></span>
+          <span style="width:5px;height:17px;border-radius:1px;background:#fff"></span>
+        </span>
+        <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff"><span style="color:#b39bff">l</span>earn<span style="color:#b39bff">t</span>erra<span style="color:#b39bff">f</span>orm<span style="color:#7c6bbf">.day</span></span>
+      </div>
+      <p style="margin:0;padding:14px 20px;font-size:13px;color:#5a5a63">A T built from a purple crossbar and a black stem. Bold, geometric.</p>
+    </div>
+
+    <div id="2c" style="flex:1 1 270px;background:#fff;border-radius:16px;border:1px solid #e6e4ea;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0eef4">
+        <span style="font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:#6d28d9;border:1px solid #6d28d9;border-radius:100px;padding:2px 10px">2c</span>
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#9a97a4">Tile T</span>
+      </div>
+      <div style="flex:1;display:grid;place-items:center;padding:40px 20px;background:#fbfaff">
+        <span style="display:grid;place-items:center;width:54px;height:54px;border-radius:12px;background:#6d28d9;font-family:'Space Grotesk';font-weight:700;font-size:32px;color:#fff">T</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:16px 20px;background:#0e0e10">
+        <span style="display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:#6d28d9;font-family:'Space Grotesk';font-weight:700;font-size:15px;color:#fff">T</span>
+        <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff"><span style="color:#b39bff">l</span>earn<span style="color:#b39bff">t</span>erra<span style="color:#b39bff">f</span>orm<span style="color:#7c6bbf">.day</span></span>
+      </div>
+      <p style="margin:0;padding:14px 20px;font-size:13px;color:#5a5a63">Solid purple tile, white T. App-icon ready, highest contrast.</p>
+    </div>
+
+    <div id="2d" style="flex:1 1 270px;background:#fff;border-radius:16px;border:1px solid #e6e4ea;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0eef4">
+        <span style="font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:#6d28d9;border:1px solid #6d28d9;border-radius:100px;padding:2px 10px">2d</span>
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#9a97a4">T as a graph</span>
+      </div>
+      <div style="flex:1;display:grid;place-items:center;padding:32px 20px;background:#fbfaff">
+        <svg width="60" height="56" viewBox="0 0 60 56" fill="none">
+          <line x1="14" y1="14" x2="46" y2="14" stroke="#c4b5fd" stroke-width="2.5"/>
+          <line x1="30" y1="14" x2="30" y2="46" stroke="#c4b5fd" stroke-width="2.5"/>
+          <circle cx="14" cy="14" r="6" fill="#0e0e10"/>
+          <circle cx="46" cy="14" r="6" fill="#0e0e10"/>
+          <circle cx="30" cy="14" r="7" fill="#6d28d9"/>
+          <circle cx="30" cy="46" r="6" fill="#0e0e10"/>
+        </svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:#0e0e10">
+        <svg width="24" height="22" viewBox="0 0 60 56" fill="none">
+          <line x1="14" y1="14" x2="46" y2="14" stroke="#7c6bbf" stroke-width="4"/>
+          <line x1="30" y1="14" x2="30" y2="46" stroke="#7c6bbf" stroke-width="4"/>
+          <circle cx="14" cy="14" r="8" fill="#fff"/>
+          <circle cx="46" cy="14" r="8" fill="#fff"/>
+          <circle cx="30" cy="14" r="9" fill="#b39bff"/>
+          <circle cx="30" cy="46" r="8" fill="#fff"/>
+        </svg>
+        <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#fff"><span style="color:#b39bff">l</span>earn<span style="color:#b39bff">t</span>erra<span style="color:#b39bff">f</span>orm<span style="color:#7c6bbf">.day</span></span>
+      </div>
+      <p style="margin:0;padding:14px 20px;font-size:13px;color:#5a5a63">A T drawn as resource nodes and edges — the graph, spelling the letter.</p>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-300); }
+  code, pre { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; }
+  .k { color: var(--color-accent-300); }
+  .s { color: #b6d3b0; }
+  .c { color: var(--color-neutral-500); }
+  .n { color: #e0c795; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(90deg); }
+  .toc a[aria-current='true'] { color: var(--color-accent); }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  @keyframes tf-float { 0%,100%{ transform: rotate(45deg) translateY(0); } 50%{ transform: rotate(45deg) translateY(-3px); } }
+  @keyframes tf-glow { 0%,100%{ opacity:.45; transform: scale(1); } 50%{ opacity:.8; transform: scale(1.09); } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:radial-gradient(1100px 560px at 12% -6%, color-mix(in srgb, var(--color-accent) 11%, transparent), transparent 60%), linear-gradient(180deg, color-mix(in srgb, #000 52%, var(--color-bg)) 0%, var(--color-bg) 560px)">
+  <div id="tf-progress" style="position:fixed;top:0;left:0;height:2px;width:0;background:var(--color-accent);z-index:50;transition:width .05s linear"></div>
+
+  <header class="nav" style="position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--color-bg) 88%, transparent);backdrop-filter:blur(8px);padding-inline:var(--space-8)">
+    <span class="nav-brand" style="display:flex;align-items:center;gap:var(--space-3)">
+      <span style="display:inline-block;width:22px;height:22px;border:1.5px solid var(--color-accent);border-radius:4px;transform:rotate(45deg);animation:tf-float 4.5s ease-in-out infinite"></span>
+      Terraform in an afternoon
+    </span>
+    <a href="#core">Concepts</a>
+    <a href="#state">State</a>
+    <a href="#cli">CLI</a>
+    <a href="#practices">Gotchas</a>
+    <a href="#examples">Examples</a>
+  </header>
+
+  <section style="position:relative;max-width:1240px;margin:0 auto;padding:calc(var(--space-8) * 2.4) var(--space-8) calc(var(--space-8) * 1.4)">
+    <div aria-hidden="true" style="position:absolute;top:0;left:-40px;width:560px;height:400px;background:radial-gradient(circle, color-mix(in srgb, var(--color-accent) 24%, transparent), transparent 66%);filter:blur(34px);pointer-events:none;z-index:0;animation:tf-glow 7s ease-in-out infinite"></div>
+    <div style="position:relative;z-index:1;max-width:760px">
+      <p class="card-kicker" style="margin-bottom:var(--space-2)">Infrastructure as code · Reference guide</p>
+      <h1 style="font-size:52px;line-height:1.05;margin-bottom:var(--space-4)">Learn Terraform in an afternoon.</h1>
+      <p style="font-size:17px;color:var(--color-neutral-300);max-width:600px">A dense, working reference for engineers who know some cloud but haven't written much HCL — and for anyone drilling for an interview or the Associate cert. Every concept, the syntax, and configs you can copy.</p>
+      <div style="display:flex;gap:var(--space-6);margin-top:var(--space-6);flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--color-neutral-400)"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>10 sections</span>
+        <span style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--color-neutral-400)"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>~40 min read</span>
+        <span style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--color-neutral-400)"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-accent)"></span>Terraform 1.x / OpenTofu</span>
+      </div>
+    </div>
+  </section>
+
+  <div style="max-width:1240px;margin:0 auto;padding:var(--space-8) var(--space-8) calc(var(--space-8) * 3);display:grid;grid-template-columns:200px 1fr;gap:calc(var(--space-8) * 2.4);align-items:start">
+
+    <nav class="toc" style="position:sticky;top:76px;display:flex;flex-direction:column;gap:2px;font-size:13px">
+      <p style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:var(--space-3)">On this page</p>
+      <a href="#core" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">1 · Core concepts</a>
+      <a href="#hcl" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">2 · HCL syntax</a>
+      <a href="#vars" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">3 · Variables & outputs</a>
+      <a href="#modules" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">4 · Modules</a>
+      <a href="#state" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">5 · State & backends</a>
+      <a href="#workspaces" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">6 · Workspaces</a>
+      <a href="#provisioners" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">7 · Provisioners</a>
+      <a href="#cli" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">8 · CLI commands</a>
+      <a href="#practices" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">9 · Best practices</a>
+      <a href="#examples" style="color:var(--color-neutral-300);text-decoration:none;padding:5px 0">10 · Example configs</a>
+    </nav>
+
+    <main style="min-width:0;max-width:760px">
+
+      <section id="core" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">01</span>
+        <h2 style="margin-top:var(--space-3)">Core concepts</h2>
+        <p style="color:var(--color-neutral-300)">Terraform is a declarative infrastructure-as-code tool. You describe the desired state of your infrastructure in configuration files; Terraform builds an execution plan to reach that state and applies it through provider plugins. It reconciles configuration against recorded state — not against imperative steps.</p>
+        <dl style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-3) var(--space-6);margin:var(--space-6) 0;font-size:14px">
+          <dt style="color:var(--color-accent-300);font-weight:500">Provider</dt><dd style="margin:0;color:var(--color-neutral-300)">A plugin for a platform (<code>aws</code>, <code>google</code>, <code>azurerm</code>). Configured once, exposes resources and data sources.</dd>
+          <dt style="color:var(--color-accent-300);font-weight:500">Resource</dt><dd style="margin:0;color:var(--color-neutral-300)">A managed object — a VM, bucket, DNS record. Terraform creates, updates, and destroys it to match config.</dd>
+          <dt style="color:var(--color-accent-300);font-weight:500">Data source</dt><dd style="margin:0;color:var(--color-neutral-300)">A read-only lookup of something that already exists (an AMI id, an existing VPC). It never changes infrastructure.</dd>
+          <dt style="color:var(--color-accent-300);font-weight:500">State</dt><dd style="margin:0;color:var(--color-neutral-300)">A JSON file mapping your config to real-world objects and caching their attributes. Terraform's source of truth for what it manages.</dd>
+          <dt style="color:var(--color-accent-300);font-weight:500">Plan / apply</dt><dd style="margin:0;color:var(--color-neutral-300)">The core loop: <code>init</code> to set up, <code>plan</code> to preview the diff, <code>apply</code> to enact it, <code>destroy</code> to tear down.</dd>
+        </dl>
+        <p style="color:var(--color-neutral-300)">A minimal configuration declares a provider and one resource:</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">main.tf</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">terraform</span> {
+  <span class="k">required_providers</span> {
+    aws = {
+      source  = <span class="s">"hashicorp/aws"</span>
+      version = <span class="s">"~> 5.0"</span>
+    }
+  }
+}
+
+<span class="k">provider</span> <span class="s">"aws"</span> {
+  region = <span class="s">"us-east-1"</span>
+}
+
+<span class="k">resource</span> <span class="s">"aws_s3_bucket"</span> <span class="s">"assets"</span> {
+  bucket = <span class="s">"acme-assets-prod"</span>
+}</code></pre>
+        </div>
+        <details style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:color-mix(in srgb, var(--color-accent) 5%, transparent)">
+          <summary style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--color-accent-300)"><span class="chev" style="display:inline-block;transition:transform .15s">▸</span>Cert check — declarative vs imperative</summary>
+          <p style="margin:var(--space-3) 0 0;font-size:14px;color:var(--color-neutral-300)">Terraform is declarative: you state the desired end state, not the steps. Given the same config and state, repeated applies are idempotent — no change if reality already matches. This is why order of resource blocks in a file does not matter; dependencies are derived from references.</p>
+        </details>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="hcl" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">02</span>
+        <h2 style="margin-top:var(--space-3)">HCL syntax</h2>
+        <p style="color:var(--color-neutral-300)">Configuration is written in HCL — HashiCorp Configuration Language. Everything is either a <em>block</em> (a labelled body in braces) or an <em>argument</em> (<code>name = expression</code>). Expressions reference other objects as <code>type.name.attribute</code>.</p>
+        <h4 style="margin-top:var(--space-6)">Types</h4>
+        <p style="color:var(--color-neutral-300)">Primitives <code>string</code>, <code>number</code>, <code>bool</code>; collections <code>list()</code>, <code>set()</code>, <code>map()</code>; structural <code>object({})</code> and <code>tuple([])</code>. <code>null</code> omits an argument.</p>
+        <h4 style="margin-top:var(--space-6)">Meta-arguments</h4>
+        <p style="color:var(--color-neutral-300)">Available on most resource and module blocks: <code>count</code> and <code>for_each</code> (multiple instances), <code>depends_on</code> (explicit ordering), <code>lifecycle</code> (<code>create_before_destroy</code>, <code>prevent_destroy</code>, <code>ignore_changes</code>), and <code>provider</code> (which aliased provider to use).</p>
+        <p style="color:var(--color-neutral-300)">Prefer <code>for_each</code> over <code>count</code> — it keys instances by a stable string, so removing one item doesn't re-index and recreate the rest:</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">for_each & dynamic</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">resource</span> <span class="s">"aws_iam_user"</span> <span class="s">"team"</span> {
+  <span class="n">for_each</span> = <span class="k">toset</span>([<span class="s">"ada"</span>, <span class="s">"linus"</span>, <span class="s">"grace"</span>])
+  name     = each.value
+}
+
+<span class="k">resource</span> <span class="s">"aws_security_group"</span> <span class="s">"web"</span> {
+  name = <span class="s">"web"</span>
+
+  <span class="c"># dynamic block: one ingress per port in the list</span>
+  <span class="k">dynamic</span> <span class="s">"ingress"</span> {
+    for_each = [80, 443]
+    content {
+      from_port = ingress.value
+      to_port   = ingress.value
+      protocol  = <span class="s">"tcp"</span>
+    }
+  }
+}</code></pre>
+        </div>
+        <p style="color:var(--color-neutral-300)">Useful expression forms: conditional <code>cond ? a : b</code>, <code>for</code> comprehensions <code>[for x in list : upper(x)]</code>, splat <code>aws_instance.web[*].id</code>, and interpolation <code>"${var.env}-app"</code>.</p>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="vars" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">03</span>
+        <h2 style="margin-top:var(--space-3)">Variables & outputs</h2>
+        <p style="color:var(--color-neutral-300)"><code>variable</code> blocks are a module's inputs; <code>output</code> blocks are its return values; <code>locals</code> are named intermediate expressions. Give variables a <code>type</code> and — where it helps — a <code>default</code>, a <code>validation</code>, and <code>sensitive = true</code>.</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">variables.tf</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">variable</span> <span class="s">"instance_count"</span> {
+  type    = number
+  default = 2
+
+  validation {
+    condition     = var.instance_count &gt; 0
+    error_message = <span class="s">"Must run at least one instance."</span>
+  }
+}
+
+<span class="k">locals</span> {
+  name_prefix = <span class="s">"${var.env}-web"</span>
+}
+
+<span class="k">output</span> <span class="s">"public_ip"</span> {
+  value       = aws_instance.web.public_ip
+  description = <span class="s">"Reachable address of the web host"</span>
+}</code></pre>
+        </div>
+        <h4>Where values come from</h4>
+        <p style="color:var(--color-neutral-300)">In increasing precedence: environment variables (<code>TF_VAR_name</code>), the auto-loaded <code>terraform.tfvars</code> and <code>*.auto.tfvars</code>, then <code>-var-file</code>, then <code>-var</code> on the command line. Later sources win.</p>
+        <details style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:color-mix(in srgb, var(--color-accent) 5%, transparent);margin-top:var(--space-4)">
+          <summary style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--color-accent-300)"><span class="chev" style="display:inline-block;transition:transform .15s">▸</span>Cert check — does <code>sensitive</code> hide the value everywhere?</summary>
+          <p style="margin:var(--space-3) 0 0;font-size:14px;color:var(--color-neutral-300)">No. <code>sensitive = true</code> redacts a value from CLI plan/apply output, but it is still written in plaintext to state. Protect state itself (encrypted remote backend, restricted access) — sensitivity is not encryption.</p>
+        </details>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="modules" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">04</span>
+        <h2 style="margin-top:var(--space-3)">Modules</h2>
+        <p style="color:var(--color-neutral-300)">A module is any directory of <code>.tf</code> files. The directory you run Terraform in is the <em>root module</em>; a <code>module</code> block calls a <em>child module</em>. Its variables are the inputs you pass, its outputs are what you read back — that is the entire interface. Always pin a <code>version</code> for registry and Git sources.</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">calling a module</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="c"># from the Terraform Registry</span>
+<span class="k">module</span> <span class="s">"vpc"</span> {
+  source  = <span class="s">"terraform-aws-modules/vpc/aws"</span>
+  version = <span class="s">"5.8.1"</span>
+
+  name = <span class="s">"prod"</span>
+  cidr = <span class="s">"10.0.0.0/16"</span>
+}
+
+<span class="c"># a local child module</span>
+<span class="k">module</span> <span class="s">"web"</span> {
+  source     = <span class="s">"./modules/web"</span>
+  subnet_ids = module.vpc.private_subnets
+}</code></pre>
+        </div>
+        <p style="color:var(--color-neutral-300)">Sources include local paths (<code>./modules/web</code>), the public/private registry (<code>namespace/name/provider</code>), and Git (<code>git::https://...</code>). Reference a module's output as <code>module.NAME.OUTPUT</code>.</p>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="state" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">05</span>
+        <h2 style="margin-top:var(--space-3)">State & backends</h2>
+        <p style="color:var(--color-neutral-300)">State lives locally in <code>terraform.tfstate</code> by default. For any shared or production work, use a <em>remote backend</em> so the team reads one state and Terraform can lock it against concurrent applies.</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">backend.tf — S3 + DynamoDB lock</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">terraform</span> {
+  <span class="k">backend</span> <span class="s">"s3"</span> {
+    bucket         = <span class="s">"acme-tfstate"</span>
+    key            = <span class="s">"prod/network.tfstate"</span>
+    region         = <span class="s">"us-east-1"</span>
+    dynamodb_table = <span class="s">"tf-locks"</span>
+    encrypt        = true
+  }
+}</code></pre>
+        </div>
+        <p style="color:var(--color-neutral-300)">Common backends: <code>s3</code> (with DynamoDB locking), <code>gcs</code>, <code>azurerm</code>, and Terraform Cloud / HCP. Manage state with the <code>terraform state</code> subcommands — <code>list</code>, <code>show</code>, <code>mv</code> (rename/move an address), <code>rm</code> (forget without destroying), <code>pull</code> / <code>push</code>. Bring existing infrastructure under management with <code>terraform import ADDRESS ID</code>.</p>
+        <details style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);background:color-mix(in srgb, var(--color-accent) 5%, transparent);margin-top:var(--space-4)">
+          <summary style="display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--color-accent-300)"><span class="chev" style="display:inline-block;transition:transform .15s">▸</span>Cert check — what does locking prevent?</summary>
+          <p style="margin:var(--space-3) 0 0;font-size:14px;color:var(--color-neutral-300)">State locking stops two applies from writing state at the same time and corrupting it. It is acquired for the duration of a write operation and released after. Not all backends support it; S3 uses a DynamoDB table as the lock.</p>
+        </details>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="workspaces" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">06</span>
+        <h2 style="margin-top:var(--space-3)">Workspaces</h2>
+        <p style="color:var(--color-neutral-300)">CLI workspaces give one configuration multiple independent state files under the same backend. Switch with <code>terraform workspace new staging</code> / <code>select staging</code>, and branch on <code>terraform.workspace</code> inside config.</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">terraform.workspace</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">locals</span> {
+  instance_size = terraform.workspace == <span class="s">"prod"</span> ? <span class="s">"m5.large"</span> : <span class="s">"t3.micro"</span>
+}</code></pre>
+        </div>
+        <p style="color:var(--color-neutral-300)"><strong>Caveat.</strong> Workspaces share the same backend, config, and credentials, so they are weak isolation. For real environment separation (prod vs staging), most teams prefer separate directories or separate backend keys, not workspaces alone.</p>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="provisioners" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">07</span>
+        <h2 style="margin-top:var(--space-3)">Provisioners</h2>
+        <p style="color:var(--color-neutral-300)">Provisioners run scripts as part of resource creation or destruction — <code>local-exec</code> (on the machine running Terraform), <code>remote-exec</code> and <code>file</code> (on the target, over a <code>connection</code>). HashiCorp calls them a <em>last resort</em>: they break the declarative model and aren't tracked in state.</p>
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:var(--space-3) 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">provisioner</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">resource</span> <span class="s">"aws_instance"</span> <span class="s">"web"</span> {
+  <span class="c"># ...</span>
+  <span class="k">provisioner</span> <span class="s">"local-exec"</span> {
+    command = <span class="s">"echo ${self.public_ip} &gt;&gt; hosts.txt"</span>
+  }
+}</code></pre>
+        </div>
+        <p style="color:var(--color-neutral-300)">Prefer the cloud-native path — pass a startup script through <code>user_data</code> / cloud-init, or bake an image with Packer — before reaching for a provisioner.</p>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="cli" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">08</span>
+        <h2 style="margin-top:var(--space-3)">CLI commands</h2>
+        <p style="color:var(--color-neutral-300)">The commands you'll type every day, in roughly the order you meet them.</p>
+        <table class="table" style="margin-top:var(--space-4)">
+          <thead><tr><th style="width:180px">Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>init</code></td><td>Downloads providers and configures the backend. Run first, and after backend or provider changes.</td></tr>
+            <tr><td><code>fmt</code></td><td>Rewrites files to canonical style. Run in CI with <code>-check</code>.</td></tr>
+            <tr><td><code>validate</code></td><td>Checks syntax and internal consistency without touching any provider.</td></tr>
+            <tr><td><code>plan</code></td><td>Shows the diff between config and state. Save with <code>-out=tfplan</code>.</td></tr>
+            <tr><td><code>apply</code></td><td>Enacts the plan. <code>apply tfplan</code> applies a saved plan with no re-prompt.</td></tr>
+            <tr><td><code>destroy</code></td><td>Destroys everything in state. Equivalent to <code>apply -destroy</code>.</td></tr>
+            <tr><td><code>output</code></td><td>Prints output values; <code>-json</code> for machine use.</td></tr>
+            <tr><td><code>state</code></td><td><code>list</code>, <code>show</code>, <code>mv</code>, <code>rm</code> — inspect and surgically edit state.</td></tr>
+            <tr><td><code>import</code></td><td>Brings an existing object under Terraform management.</td></tr>
+            <tr><td><code>-replace=</code></td><td>Forces one resource to be recreated (replaces the deprecated <code>taint</code>).</td></tr>
+            <tr><td><code>console</code></td><td>An interactive REPL for evaluating expressions against state.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="practices" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">09</span>
+        <h2 style="margin-top:var(--space-3)">Best practices & gotchas</h2>
+        <ul style="color:var(--color-neutral-300);padding-left:1.1em;margin:var(--space-4) 0;display:flex;flex-direction:column;gap:var(--space-3)">
+          <li>Use a remote backend with locking from day one; never commit <code>.tfstate</code> or <code>.tfvars</code> holding secrets.</li>
+          <li>Pin provider versions (<code>required_providers</code>) and module versions. Commit the <code>.terraform.lock.hcl</code> lock file.</li>
+          <li>Keep modules small with a clear input/output interface. Compose, don't nest deeply.</li>
+          <li>Always <code>plan</code> and read the diff before <code>apply</code>. Wire <code>fmt -check</code> and <code>validate</code> into CI.</li>
+          <li>Favour <code>for_each</code> over <code>count</code> for anything that will change; avoid provisioners.</li>
+        </ul>
+        <p style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-top:var(--space-6)">Gotchas that bite</p>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-3)">
+          <details style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4)">
+            <summary style="display:flex;align-items:center;gap:var(--space-2);font-size:14px;color:var(--color-neutral-200)"><span class="chev" style="display:inline-block;transition:transform .15s;color:var(--color-accent)">▸</span><code>count</code> re-indexes on removal</summary>
+            <p style="margin:var(--space-3) 0 0;font-size:14px;color:var(--color-neutral-300)">With <code>count</code>, instances are addressed by position (<code>[0]</code>, <code>[1]</code>…). Delete a middle item and every later one shifts index — Terraform destroys and recreates them. <code>for_each</code> keys by a string and is stable.</p>
+          </details>
+          <details style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4)">
+            <summary style="display:flex;align-items:center;gap:var(--space-2);font-size:14px;color:var(--color-neutral-200)"><span class="chev" style="display:inline-block;transition:transform .15s;color:var(--color-accent)">▸</span>Secrets live in state in plaintext</summary>
+            <p style="margin:var(--space-3) 0 0;font-size:14px;color:var(--color-neutral-300)">Passwords, keys, and any <code>sensitive</code> value are stored unencrypted inside state. Encrypt the backend and lock down who can read it. Prefer generating secrets outside Terraform where you can.</p>
+          </details>
+          <details style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4)">
+            <summary style="display:flex;align-items:center;gap:var(--space-2);font-size:14px;color:var(--color-neutral-200)"><span class="chev" style="display:inline-block;transition:transform .15s;color:var(--color-accent)">▸</span>Drift: reality changed out of band</summary>
+            <p style="margin:var(--space-3) 0 0;font-size:14px;color:var(--color-neutral-300)">If someone edits a resource in the console, the next <code>plan</code> shows a diff to pull it back. Use <code>lifecycle { ignore_changes = [...] }</code> for fields you intentionally let others manage.</p>
+          </details>
+        </div>
+      </section>
+
+      <hr class="hr" style="margin:calc(var(--space-8) * 2.4) 0">
+
+      <section id="examples" style="scroll-margin-top:80px">
+        <span class="tag tag-outline">10</span>
+        <h2 style="margin-top:var(--space-3)">Example configs</h2>
+        <p style="color:var(--color-neutral-300)">Complete, copy-ready starting points. Switch between them:</p>
+        <div class="seg" style="margin:var(--space-4) 0 var(--space-4)">
+          <label class="seg-opt"><input type="radio" name="ex" checked onChange="{{ pickVpc }}">VPC + EC2</label>
+          <label class="seg-opt"><input type="radio" name="ex" onChange="{{ pickBackend }}">Remote backend</label>
+          <label class="seg-opt"><input type="radio" name="ex" onChange="{{ pickModule }}">Reusable module</label>
+        </div>
+
+        <sc-if value="{{ exVpc }}" hint-placeholder-val="{{ true }}">
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:0 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">A web host in a new subnet</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">data</span> <span class="s">"aws_ami"</span> <span class="s">"al2023"</span> {
+  most_recent = true
+  owners      = [<span class="s">"amazon"</span>]
+  filter {
+    name   = <span class="s">"name"</span>
+    values = [<span class="s">"al2023-ami-*-x86_64"</span>]
+  }
+}
+
+<span class="k">resource</span> <span class="s">"aws_vpc"</span> <span class="s">"main"</span> {
+  cidr_block = <span class="s">"10.0.0.0/16"</span>
+}
+
+<span class="k">resource</span> <span class="s">"aws_subnet"</span> <span class="s">"public"</span> {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = <span class="s">"10.0.1.0/24"</span>
+}
+
+<span class="k">resource</span> <span class="s">"aws_instance"</span> <span class="s">"web"</span> {
+  ami           = data.aws_ami.al2023.id
+  instance_type = <span class="s">"t3.micro"</span>
+  subnet_id     = aws_subnet.public.id
+  tags = { Name = <span class="s">"web"</span> }
+}</code></pre>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ exBackend }}" hint-placeholder-val="{{ false }}">
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:0 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">Bootstrapping remote state</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="c"># 1. create the bucket + lock table once (local state)</span>
+<span class="k">resource</span> <span class="s">"aws_s3_bucket"</span> <span class="s">"state"</span> {
+  bucket = <span class="s">"acme-tfstate"</span>
+}
+
+<span class="k">resource</span> <span class="s">"aws_dynamodb_table"</span> <span class="s">"locks"</span> {
+  name         = <span class="s">"tf-locks"</span>
+  billing_mode = <span class="s">"PAY_PER_REQUEST"</span>
+  hash_key     = <span class="s">"LockID"</span>
+  attribute {
+    name = <span class="s">"LockID"</span>
+    type = <span class="s">"S"</span>
+  }
+}
+
+<span class="c"># 2. then add the backend block and re-run: terraform init -migrate-state</span></code></pre>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ exModule }}" hint-placeholder-val="{{ false }}">
+        <div data-code style="border:1px solid var(--color-divider);border-radius:var(--radius-md);background:var(--color-surface);overflow:hidden;margin:0 0 var(--space-6)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-400)">modules/bucket/main.tf</span>
+            <button onClick="{{ copyCode }}" style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--color-neutral-300);cursor:pointer" style-hover="border-color:var(--color-accent);color:var(--color-accent)"><span data-copy-label>Copy</span></button>
+          </div>
+          <pre style="margin:0;padding:var(--space-4);overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:var(--color-neutral-200)"><span class="k">variable</span> <span class="s">"name"</span> { type = string }
+<span class="k">variable</span> <span class="s">"versioned"</span> {
+  type    = bool
+  default = false
+}
+
+<span class="k">resource</span> <span class="s">"aws_s3_bucket"</span> <span class="s">"this"</span> {
+  bucket = var.name
+}
+
+<span class="k">resource</span> <span class="s">"aws_s3_bucket_versioning"</span> <span class="s">"this"</span> {
+  count  = var.versioned ? 1 : 0
+  bucket = aws_s3_bucket.this.id
+  versioning_configuration { status = <span class="s">"Enabled"</span> }
+}
+
+<span class="k">output</span> <span class="s">"arn"</span> {
+  value = aws_s3_bucket.this.arn
+}</code></pre>
+        </div>
+        </sc-if>
+      </section>
+
+      <footer style="margin-top:var(--space-8);padding-top:var(--space-6);border-top:1px solid var(--color-divider)">
+        <p style="font-size:13px;color:var(--color-neutral-500)">A reference guide. Verify commands and provider arguments against the current Terraform and provider documentation before you rely on them.</p>
+      </footer>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { example: 'vpc' };
+
+  componentDidMount() {
+    this._onScroll = () => {
+      const el = document.getElementById('tf-progress');
+      if (!el) return;
+      const h = document.documentElement;
+      const denom = (h.scrollHeight - h.clientHeight) || 1;
+      el.style.width = Math.min(100, Math.max(0, (h.scrollTop / denom) * 100)) + '%';
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onScroll();
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.style.opacity = '1';
+            en.target.style.transform = 'none';
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -8% 0px' });
+      const blocks = document.querySelectorAll('main > section, main > footer');
+      blocks.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top > window.innerHeight * 0.88) {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(20px)';
+          el.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1)';
+          io.observe(el);
+        }
+      });
+      this._io = io;
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    if (this._io) this._io.disconnect();
+  }
+
+  copyCode(e) {
+    const btn = e.currentTarget;
+    const block = btn.closest('[data-code]');
+    const code = block && block.querySelector('code');
+    if (!code) return;
+    const label = btn.querySelector('[data-copy-label]');
+    const text = code.innerText;
+    const done = () => {
+      if (!label) return;
+      const prev = label.textContent;
+      label.textContent = 'Copied';
+      setTimeout(() => { label.textContent = prev; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      done();
+    }
+  }
+
+  renderVals() {
+    const ex = this.state.example;
+    return {
+      copyCode: (e) => this.copyCode(e),
+      pickVpc: () => this.setState({ example: 'vpc' }),
+      pickBackend: () => this.setState({ example: 'backend' }),
+      pickModule: () => this.setState({ example: 'module' }),
+      exVpc: ex === 'vpc',
+      exBackend: ex === 'backend',
+      exModule: ex === 'module',
+    };
+  }
+}
+</script>
+</body>
+</html>
