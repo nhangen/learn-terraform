@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://learn-terraform.pages.dev/sitemap.xml

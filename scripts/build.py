@@ -8,15 +8,18 @@ in plain JS, so the result is a static file Cloudflare Pages can serve.
 
 Usage: python3 scripts/build.py
 """
+import datetime
 import html
 import pathlib
 import re
+import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "design" / "Terraform in an Afternoon.dc.html"
 OUT = ROOT / "public" / "index.html"
 
+BASE_URL = "https://learn-terraform.pages.dev"
 TITLE = "Learn Terraform in an Afternoon"
 DESCRIPTION = (
     "A single-page, practical tour of Terraform: core concepts, HCL syntax, "
@@ -185,6 +188,49 @@ def resolve_sc_if(markup):
     return out
 
 
+def source_date():
+    """Last commit date of the design source, as the sitemap's lastmod.
+
+    Anchoring to the content's own history rather than to the clock keeps the
+    build reproducible: a rebuild that changes nothing rewrites nothing.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "log", "-1", "--format=%cs", "--", str(SRC)],
+            cwd=str(ROOT), capture_output=True, text=True, timeout=10,
+        )
+        stamp = out.stdout.strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", stamp):
+            return stamp
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return datetime.date.today().isoformat()
+
+
+def write_robots():
+    path = OUT.parent / "robots.txt"
+    path.write_text(
+        "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % BASE_URL,
+        encoding="utf-8",
+    )
+    print("wrote %s" % path.relative_to(ROOT))
+
+
+def write_sitemap():
+    path = OUT.parent / "sitemap.xml"
+    path.write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        "  <url>\n"
+        "    <loc>%s/</loc>\n"
+        "    <lastmod>%s</lastmod>\n"
+        "  </url>\n"
+        "</urlset>\n" % (BASE_URL, source_date()),
+        encoding="utf-8",
+    )
+    print("wrote %s" % path.relative_to(ROOT))
+
+
 def main():
     if not SRC.exists():
         fail("missing canvas source: %s" % SRC)
@@ -217,10 +263,20 @@ def main():
 <title>{title}</title>
 <meta name="description" content="{description}">
 <meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="canonical" href="{base}/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{description}">
+<meta property="og:url" content="{base}/">
+<meta property="og:image" content="{base}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{description}">
+<meta name="twitter:image" content="{base}/og.png">
 {head}
 </head>
 <body>
@@ -231,6 +287,7 @@ def main():
 """.format(
         title=html.escape(TITLE),
         description=html.escape(DESCRIPTION),
+        base=BASE_URL,
         head=head,
         body=body.strip(),
         runtime=RUNTIME.strip(),
@@ -239,6 +296,9 @@ def main():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(page, encoding="utf-8")
     print("wrote %s (%d bytes)" % (OUT.relative_to(ROOT), len(page.encode("utf-8"))))
+
+    write_robots()
+    write_sitemap()
 
 
 if __name__ == "__main__":
