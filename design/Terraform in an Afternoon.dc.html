@@ -252,7 +252,7 @@
         <p style="color:#3a3a42">Common backends: <span class="ic">s3</span> (with DynamoDB locking), <span class="ic">gcs</span>, <span class="ic">azurerm</span>, and Terraform Cloud / HCP. Manage state with the <span class="ic">terraform state</span> subcommands — <span class="ic">list</span>, <span class="ic">show</span>, <span class="ic">mv</span> (rename/move an address), <span class="ic">rm</span> (forget without destroying), <span class="ic">pull</span> / <span class="ic">push</span>. Bring existing infrastructure under management with <span class="ic">terraform import ADDRESS ID</span>.</p>
         <details style="border:1px solid #e6e4ea;border-radius:12px;padding:16px 18px;background:#faf8ff;margin-top:20px">
           <summary style="display:flex;align-items:center;gap:12px;font-family:'Space Grotesk';font-weight:500;font-size:15px;color:#0e0e10"><span class="pm" style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;color:#6d28d9;font-size:18px;transition:transform .2s">+</span>Cert check — what does locking prevent?</summary>
-          <p style="margin:14px 0 0 30px;font-size:15px;color:#3a3a42">State locking stops two applies from writing state at the same time and corrupting it. It is acquired for the duration of a write operation and released after. Not all backends support it; S3 uses a DynamoDB table as the lock.</p>
+          <p style="margin:14px 0 0 30px;font-size:15px;color:#3a3a42">State locking stops two applies from writing state at the same time and corrupting it. It is acquired for the duration of a write operation and released after. Not all backends support it; the S3 backend has historically used a DynamoDB table, which is what the Associate exam expects and what the example above shows. Terraform 1.11 and current OpenTofu also support native S3 locking via <span class="ic">use_lockfile = true</span>, which drops the DynamoDB table entirely; the <span class="ic">dynamodb_table</span> argument is deprecated in recent versions.</p>
         </details>
       </section>
 
@@ -269,7 +269,7 @@
   instance_size = terraform.workspace == <span class="s">"prod"</span> ? <span class="s">"m5.large"</span> : <span class="s">"t3.micro"</span>
 }</code></pre>
         </div>
-        <p style="color:#3a3a42"><strong>Caveat.</strong> Workspaces share the same backend, config, and credentials, so they are weak isolation. For real environment separation (prod vs staging), most teams prefer separate directories or separate backend keys, not workspaces alone.</p>
+        <p style="color:#3a3a42"><strong>Caveat.</strong> Workspaces share the same backend, config, and credentials, so they are weak isolation. For real environment separation (prod vs staging), most teams prefer separate directories or separate backend keys, not workspaces alone. Note this is a limitation of <em>CLI</em> workspaces specifically &mdash; Terraform Cloud / HCP workspaces each carry their own variables and credentials, which is why some documentation recommends workspaces without this caveat.</p>
       </section>
 
       <section id="provisioners" style="scroll-margin-top:92px;padding-top:64px;margin-top:64px;border-top:1px solid #ececf1">
