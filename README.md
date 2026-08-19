@@ -66,14 +66,13 @@ what ships today; the build targets the light artboard.
 
 ## Deploying
 
-Cloudflare Pages builds from this repo on every push to `main`: it runs
-`python3 scripts/build.py` and publishes `public/`. Branches get preview
-deployments. The connection is Cloudflare's GitHub integration, so there is no
-API token stored in this repo.
+Pushes to `main` deploy `public/` to the `learn-terraform` Cloudflare Pages
+project through GitHub Actions, the same way `mysql-vs-postgres` does. The
+repository requires the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
+Actions secrets.
 
-This differs from `mysql-vs-postgres`, which deploys through a GitHub Actions
-workflow using `cloudflare/wrangler-action` and a `CLOUDFLARE_API_TOKEN` secret.
-Both land in the same place. The integration is used here because it needs no
-long-lived credential, and because running the build on Cloudflare rather than
-committing a pre-built directory means the published page cannot drift from the
-design it was generated from.
+The workflow re-runs `scripts/build.py` and fails if the result differs from the
+committed `public/`. That turns "someone edited the design and forgot to build"
+into a red check rather than a published page that no longer matches its source.
+It checks out full history because the sitemap's `lastmod` is the design file's
+last commit date, which a shallow clone cannot resolve.
