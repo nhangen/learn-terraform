@@ -47,6 +47,13 @@
   .expill { display:inline-block; padding:8px 18px; border-radius:100px; font-family:'IBM Plex Mono'; font-size:12.5px; color:#5a5a63; transition:all .18s; }
   label:has(input:checked) .expill { background:#6d28d9; color:#ffffff; }
 </style>
+<style>
+  /* Generated from the design's style-hover attributes. */
+  .hv-1:hover { border-color:#8b5cf6;color:#c4b5fd; }
+  /* The example-switcher radios are visually hidden, so without this a
+     keyboard user tabbing into the control sees no focus indicator at all. */
+  label:has(input:focus-visible) .expill { outline:2px solid #6d28d9; outline-offset:2px; }
+</style>
 </head>
 <body>
 <div style="background:#ffffff">
@@ -113,7 +120,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">main.tf</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">terraform</span> {
   <span class="k">required_providers</span> {
@@ -150,7 +157,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">for_each &amp; dynamic</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">resource</span> <span class="s">"aws_iam_user"</span> <span class="s">"team"</span> {
   <span class="n">for_each</span> = <span class="k">toset</span>([<span class="s">"ada"</span>, <span class="s">"linus"</span>, <span class="s">"grace"</span>])
@@ -181,7 +188,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">variables.tf</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">variable</span> <span class="s">"env"</span> {
   type = string
@@ -221,7 +228,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">calling a module</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="c"># from the Terraform Registry</span>
 <span class="k">module</span> <span class="s">"vpc"</span> {
@@ -248,7 +255,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">backend.tf — S3 + DynamoDB lock</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">terraform</span> {
   <span class="k">backend</span> <span class="s">"s3"</span> {
@@ -274,7 +281,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">terraform.workspace</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">locals</span> {
   instance_size = terraform.workspace == <span class="s">"prod"</span> ? <span class="s">"m5.large"</span> : <span class="s">"t3.micro"</span>
@@ -290,7 +297,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:20px 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">provisioner</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">resource</span> <span class="s">"aws_instance"</span> <span class="s">"web"</span> {
   <span class="c"># ...</span>
@@ -365,7 +372,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:0 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">A web host in a new subnet</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">data</span> <span class="s">"aws_ami"</span> <span class="s">"al2023"</span> {
   most_recent = true
@@ -418,7 +425,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:0 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">Bootstrapping remote state</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="c"># 1. create the bucket + lock table once (local state)</span>
 <span class="k">resource</span> <span class="s">"aws_s3_bucket"</span> <span class="s">"state"</span> {
@@ -443,7 +450,7 @@
         <div data-code style="border-radius:12px;background:#0e0e10;overflow:hidden;margin:0 0 24px">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09)">
             <span style="font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.04em;color:#b39bff">modules/bucket/main.tf</span>
-            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" style-hover="border-color:#8b5cf6;color:#c4b5fd"><span data-copy-label>Copy</span></button>
+            <button data-copy style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 11px;font-family:'IBM Plex Mono';font-size:11px;color:#d6d6dc;cursor:pointer;transition:border-color .15s,color .15s" class="hv-1"><span data-copy-label>Copy</span></button>
           </div>
           <pre style="margin:0;padding:18px;overflow:auto"><code style="font-size:12.5px;line-height:1.7;color:#b9b9c0"><span class="k">variable</span> <span class="s">"name"</span> { type = string }
 <span class="k">variable</span> <span class="s">"versioned"</span> {

@@ -153,6 +153,32 @@ def extract(pattern, text, what, flags=re.S):
     return m
 
 
+def resolve_hover(markup):
+    """Turn the canvas runtime's `style-hover` attribute into real CSS.
+
+    `style-hover` is interpreted by the design editor's runtime, not by a
+    browser, so it is inert in a plain page -- the hover states simply vanish.
+    Each distinct declaration becomes one generated class, shared by every
+    element that used it.
+    """
+    rules, classes = [], {}
+
+    def replace(m):
+        decl = m.group("decl").strip().rstrip(";")
+        if decl not in classes:
+            name = "hv-%d" % (len(classes) + 1)
+            classes[decl] = name
+            rules.append(".%s:hover { %s; }" % (name, decl))
+        return ' class="%s"' % classes[decl]
+
+    out, count = re.subn(
+        r'\s+style-hover="(?P<decl>[^"]*)"', replace, markup
+    )
+    if count:
+        print("  resolved %d style-hover attribute(s) into %d rule(s)" % (count, len(rules)))
+    return out, "\n  ".join(rules)
+
+
 def resolve_sc_if(markup):
     """Replace the editor's <sc-if> conditionals with static markup.
 
@@ -251,9 +277,16 @@ def main():
     for fn, value in (("pickVpc", "vpc"), ("pickBackend", "backend"), ("pickModule", "module")):
         body = body.replace('onChange="{{ %s }}"' % fn, 'data-pick="%s"' % value)
 
-    leftover = re.findall(r"\{\{[^}]*\}\}|<sc-[a-z]+", body)
+    body, hover_css = resolve_hover(body)
+
+    # Anything the canvas runtime interprets is inert in a plain page. Catching
+    # attributes as well as tags and bindings is deliberate: `style-hover`
+    # shipped silently once, dropping every hover state on the page.
+    leftover = re.findall(
+        r"\{\{[^}]*\}\}|<sc-[a-z]+|\bstyle-(?:hover|active|focus)=|\bhint-[a-z-]+=", body
+    )
     if leftover:
-        fail("unconverted canvas bindings remain: %s" % ", ".join(sorted(set(leftover))))
+        fail("unconverted canvas constructs remain: %s" % ", ".join(sorted(set(leftover))))
 
     page = """<!DOCTYPE html>
 <html lang="en">
@@ -278,6 +311,13 @@ def main():
 <meta name="twitter:description" content="{description}">
 <meta name="twitter:image" content="{base}/og.png">
 {head}
+<style>
+  /* Generated from the design's style-hover attributes. */
+  {hover_css}
+  /* The example-switcher radios are visually hidden, so without this a
+     keyboard user tabbing into the control sees no focus indicator at all. */
+  label:has(input:focus-visible) .expill {{ outline:2px solid #6d28d9; outline-offset:2px; }}
+</style>
 </head>
 <body>
 {body}
@@ -288,6 +328,7 @@ def main():
         title=html.escape(TITLE),
         description=html.escape(DESCRIPTION),
         base=BASE_URL,
+        hover_css=hover_css,
         head=head,
         body=body.strip(),
         runtime=RUNTIME.strip(),
