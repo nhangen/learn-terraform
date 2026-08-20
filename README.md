@@ -60,9 +60,10 @@ python3 -m http.server 8899 --directory public
 Edit `design/Terraform in an Afternoon.dc.html` — in the Claude Design canvas or
 by hand — then re-run the build and commit both the design and `public/`.
 
-`design/Terraform in an Afternoon (Nocturne).dc.html` is a dark-theme variant of
-the same page, built on the Nocturne design system in `design/_ds/`. It is not
-what ships today; the build targets the light artboard.
+`design/Terraform in an Afternoon (Nocturne).dc.html` is an abandoned early
+dark-theme exploration, along with the `design/_ds/` design system and
+`design/styles.css` that only it uses. It was not carried forward — the light
+artboard is the design. Kept for reference only; don't build on it.
 
 ## Deploying
 
