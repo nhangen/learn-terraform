@@ -31,11 +31,17 @@ jobs:
       - name: Build site
         run: python3 scripts/build.py
 
+      # sitemap.xml is excluded on purpose. Its lastmod is the design file's
+      # last commit date, and the sitemap is committed *in* that same commit,
+      # so the committed copy can never match what this rebuild produces --
+      # every design change would fail here on its first push. Nothing is lost:
+      # the deploy publishes what this step just rebuilt, not what was
+      # committed, so the shipped sitemap is always freshly generated.
       - name: Fail if the build output was stale
         run: |
-          if ! git diff --quiet -- public/; then
+          if ! git diff --quiet -- public/ ':!public/sitemap.xml'; then
             echo "::error::public/ is out of date with design/ — run 'python3 scripts/build.py' and commit the result."
-            git --no-pager diff --stat -- public/
+            git --no-pager diff --stat -- public/ ':!public/sitemap.xml'
             exit 1
           fi
 
