@@ -10,6 +10,7 @@ Usage: python3 scripts/build.py
 """
 import datetime
 import html
+from html.parser import HTMLParser
 import pathlib
 import re
 import subprocess
@@ -153,6 +154,71 @@ def extract(pattern, text, what, flags=re.S):
     return m
 
 
+class _FlexTextAudit(HTMLParser):
+    """Find flex containers holding both bare text and element children.
+
+    Flex layout promotes every bare text run to an anonymous flex item, so the
+    container's `gap` lands between words and `align-items` stretches inline
+    code chips into tall boxes. The prose has to sit in one element to be one
+    item. Shipped once already -- every bullet under "Best practices" and both
+    open cert-check summaries were broken this way in the original design.
+    """
+
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.stack = []
+        self.bad = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("br", "img", "hr", "meta", "link", "input"):
+            return
+        style = dict(attrs).get("style") or ""
+        flex = "display:flex" in style.replace(" ", "")
+        if self.stack:
+            self.stack[-1]["elements"] += 1
+        # a new element closes whatever text run was accumulating
+        if self.stack:
+            self.stack[-1]["open_run"] = False
+        self.stack.append(
+            {"tag": tag, "flex": flex, "runs": [], "open_run": False, "elements": 0}
+        )
+
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i]["tag"] != tag:
+                continue
+            frame = self.stack.pop(i)
+            del self.stack[i:]
+            # One trailing text run beside elements is a normal label -- the
+            # side-nav's "01" + "Core concepts" is meant to have a gap. The
+            # breakage is prose split into several runs by inline chips, so
+            # every fragment becomes its own flex item.
+            if frame["flex"] and len(frame["runs"]) > 1:
+                self.bad.append("<%s> %r" % (tag, " / ".join(frame["runs"])[:70]))
+            return
+
+    def handle_data(self, data):
+        if not self.stack or not data.strip():
+            return
+        frame = self.stack[-1]
+        if frame["open_run"]:
+            frame["runs"][-1] += data.strip()
+        else:
+            frame["runs"].append(data.strip())
+            frame["open_run"] = True
+
+
+def audit_flex_text(markup):
+    a = _FlexTextAudit()
+    a.feed(markup)
+    if a.bad:
+        fail(
+            "flex container mixes bare text with elements -- wrap the prose in "
+            "one span or the gap lands between words:\n    "
+            + "\n    ".join(a.bad)
+        )
+
+
 def resolve_hover(markup):
     """Turn the canvas runtime's `style-hover` attribute into real CSS.
 
@@ -287,6 +353,8 @@ def main():
     )
     if leftover:
         fail("unconverted canvas constructs remain: %s" % ", ".join(sorted(set(leftover))))
+
+    audit_flex_text(body)
 
     page = """<!DOCTYPE html>
 <html lang="en">
