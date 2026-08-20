@@ -171,9 +171,10 @@
   <span class="k">dynamic</span> <span class="s">"ingress"</span> {
     for_each = [80, 443]
     content {
-      from_port = ingress.value
-      to_port   = ingress.value
-      protocol  = <span class="s">"tcp"</span>
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = <span class="s">"tcp"</span>
+      cidr_blocks = [<span class="s">"0.0.0.0/0"</span>]
     }
   }
 }</code></pre>
@@ -325,7 +326,7 @@
             <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">output</span></td><td style="padding:11px 0;color:#3a3a42">Prints output values; <span class="ic">-json</span> for machine use.</td></tr>
             <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">state</span></td><td style="padding:11px 0;color:#3a3a42"><span class="ic">list</span>, <span class="ic">show</span>, <span class="ic">mv</span>, <span class="ic">rm</span> — inspect and surgically edit state.</td></tr>
             <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">import</span></td><td style="padding:11px 0;color:#3a3a42">Brings an existing object under Terraform management.</td></tr>
-            <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">apply -replace=</span></td><td style="padding:11px 0;color:#3a3a42">A flag on <span class="ic">plan</span>/<span class="ic">apply</span>, not a command of its own. Forces one resource to be recreated (replaces the deprecated <span class="ic">taint</span>).</td></tr>
+            <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">apply -replace=ADDRESS</span></td><td style="padding:11px 0;color:#3a3a42">A flag on <span class="ic">plan</span>/<span class="ic">apply</span>, not a command of its own. Forces one resource to be recreated (replaces the deprecated <span class="ic">taint</span>).</td></tr>
             <tr><td style="padding:11px 12px 11px 0"><span class="ic">console</span></td><td style="padding:11px 0;color:#3a3a42">An interactive REPL for evaluating expressions against state.</td></tr>
           </tbody>
         </table>
@@ -462,10 +463,13 @@
   bucket = var.name
 }
 
+<span class="c"># not count: destroying this resource would leave versioning
+# switched on in AWS, since S3 can only suspend it, never remove it</span>
 <span class="k">resource</span> <span class="s">"aws_s3_bucket_versioning"</span> <span class="s">"this"</span> {
-  count  = var.versioned ? 1 : 0
   bucket = aws_s3_bucket.this.id
-  versioning_configuration { status = <span class="s">"Enabled"</span> }
+  versioning_configuration {
+    status = var.versioned ? <span class="s">"Enabled"</span> : <span class="s">"Suspended"</span>
+  }
 }
 
 <span class="k">output</span> <span class="s">"arn"</span> {
