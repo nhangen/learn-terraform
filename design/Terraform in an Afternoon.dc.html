@@ -201,6 +201,7 @@
         <details style="border:1px solid #e6e4ea;border-radius:12px;padding:16px 18px;background:#faf8ff;margin-top:20px">
           <summary style="display:flex;align-items:center;gap:12px;font-family:'Space Grotesk';font-weight:500;font-size:15px;color:#0e0e10"><span class="pm" style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;color:#6d28d9;font-size:18px;transition:transform .2s">+</span>Cert check — does <span class="ic">sensitive</span> hide the value everywhere?</summary>
           <p style="margin:14px 0 0 30px;font-size:15px;color:#3a3a42">No. <span class="ic">sensitive = true</span> redacts a value from CLI plan/apply output, but it is still written in plaintext to state. Protect state itself (encrypted remote backend, restricted access) — sensitivity is not encryption.</p>
+          <p style="margin:12px 0 0 30px;font-size:15px;color:#3a3a42">Sensitivity also propagates. An <span class="ic">output</span> whose value derives from a sensitive variable or attribute fails the plan outright — <em>Output refers to sensitive values</em> — until that <span class="ic">output</span> block is marked <span class="ic">sensitive = true</span> as well.</p>
         </details>
       </section>
 
@@ -309,6 +310,7 @@
             <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">state</span></td><td style="padding:11px 0;color:#3a3a42"><span class="ic">list</span>, <span class="ic">show</span>, <span class="ic">mv</span>, <span class="ic">rm</span> — inspect and surgically edit state.</td></tr>
             <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">import</span></td><td style="padding:11px 0;color:#3a3a42">Brings an existing object under Terraform management.</td></tr>
             <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">apply -replace=ADDRESS</span></td><td style="padding:11px 0;color:#3a3a42">A flag on <span class="ic">plan</span>/<span class="ic">apply</span>, not a command of its own. Forces one resource to be recreated (replaces the deprecated <span class="ic">taint</span>).</td></tr>
+            <tr style="border-bottom:1px solid #ededf1"><td style="padding:11px 12px 11px 0"><span class="ic">plan -refresh-only</span></td><td style="padding:11px 0;color:#3a3a42">Reconciles state with real infrastructure without proposing changes. The standalone <span class="ic">terraform refresh</span> is deprecated &mdash; use this, or <span class="ic">apply -refresh-only</span> to write the result to state.</td></tr>
             <tr><td style="padding:11px 12px 11px 0"><span class="ic">console</span></td><td style="padding:11px 0;color:#3a3a42">An interactive REPL for evaluating expressions against state.</td></tr>
           </tbody>
         </table>
